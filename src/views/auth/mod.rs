@@ -1,13 +1,11 @@
-use actix_web::web;
+use actix_web::web::{ServiceConfig, get, scope};
 mod login;
 mod logout;
-use super::path::Path;
 
-pub fn auth_factory(app: &mut web::ServiceConfig) {
-    let base_path: Path = Path{prefix: String::from("/auth")};
-    app
-    .route(&base_path.define(String::from("/login")), 
-           web::get().to(login::login))
-    .route(&base_path.define(String::from("/logout")),
-           web::get().to(logout::logout));
+
+pub fn auth_view_factory(app: &mut ServiceConfig) {
+    app.service(scope("v1/auth")
+       .route("login", get().to(login::login))
+       .route("logout", get().to(logout::logout))
+    );
 }

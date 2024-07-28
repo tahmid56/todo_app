@@ -1,5 +1,6 @@
 use structs::{done::Done, pending::Pending};
-
+use enums::TaskStatus;
+pub mod enums;
 pub mod structs;
 
 pub enum ItemTypes{
@@ -8,14 +9,13 @@ pub enum ItemTypes{
 }
 
 
-pub fn to_do_factory(item_type: &str, input_title: &str) -> Result<ItemTypes, &'static str>{
-    if item_type == "pending"{
-        let pending_item = Pending::new(input_title);
-        Ok(ItemTypes::Pending(pending_item))
-    }else if item_type == "done" {
-        let done_item = Done::new(input_title);
-        Ok(ItemTypes::Done(done_item))
-    }else {
-        Err("This is not accepted")
+pub fn to_do_factory(title: &str, status: TaskStatus) -> ItemTypes{
+    match status {
+        TaskStatus::DONE => {
+            ItemTypes::Done(Done::new(title))
+        },
+        TaskStatus::PENDING => {
+            ItemTypes::Pending(Pending::new(title))
+        }
     }
 }
