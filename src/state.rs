@@ -6,13 +6,21 @@ use std::fs;
 use std::io::Read;
 
 
-pub fn read_file(file_name: &str) -> Map<String, Value> {
+pub fn read_file(file_name: &str) -> Option<Map<String, Value>> {
     let mut file = File::open(file_name).unwrap();
     let mut data = String::new();
     file.read_to_string(&mut data).unwrap();
-    let json: Value = serde_json::from_str(&data).unwrap();
-    let state: Map<String, Value> = json.as_object().unwrap().clone();
-    state
+    let json: Result<Value, _> = serde_json::from_str(&data);
+    match json {
+        Ok(j) => {
+            let state: Map<String, Value> = j.as_object().unwrap().clone();
+            Some(state)
+        },
+        Err(e) => {
+            println!("Error parsing: {:?}", e);
+            None
+        }
+    }
 }
 
 pub fn write_to_file(file_name: &str, state:&mut Map<String, Value>) {
