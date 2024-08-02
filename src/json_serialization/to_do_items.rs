@@ -1,5 +1,7 @@
 use serde::Serialize;
-use crate::to_do::ItemTypes;
+use crate::state::read_file;
+use crate::to_do::enums::TaskStatus;
+use crate::to_do::{to_do_factory, ItemTypes};
 use crate::to_do::structs::base::Base;
 
 
@@ -29,5 +31,16 @@ impl ToDoItems {
             pending_item_count,
             done_item_count
         }
+    }
+
+    pub fn get_state() -> ToDoItems {
+        let state = read_file("./state.json").unwrap();
+    let mut array_buffer = Vec::new();
+    for (key, value) in state {
+        let status = TaskStatus::from_string(value.to_string());
+        let item: ItemTypes = to_do_factory(&key, status);
+        array_buffer.push(item);
+    }
+    ToDoItems::new(array_buffer)
     }
 }
