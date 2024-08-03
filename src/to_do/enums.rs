@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 
-
+#[derive(Clone, Debug)]
 pub enum TaskStatus{
     DONE,
     PENDING
